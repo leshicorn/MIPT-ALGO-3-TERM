@@ -1,1 +1,1 @@
-Here is repository algorithms studying
+# Here is repository algorithms studying
