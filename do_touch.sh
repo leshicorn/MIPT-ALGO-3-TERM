@@ -17,8 +17,9 @@ fi
 
 mkdir "contest$CONTEST_NUMBER"
 echo "Created folder contest$CONTEST_NUMBER"
-for ((i=START; i < END; i++)) do
-    REL_FILE_PATH="contest$CONTEST_NUMBER/task$i.cpp"
+for ((i= 101; i < END + 101; i++)) do
+    character=$(printf \\$(($i)))
+    REL_FILE_PATH="contest$CONTEST_NUMBER/$character.cpp"
     touch $REL_FILE_PATH
     echo "Created file $REL_FILE_PATH"
 

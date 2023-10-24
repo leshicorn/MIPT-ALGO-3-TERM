@@ -43,7 +43,6 @@
         "ostream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp",
-        "map": "cpp"
+        "typeinfo": "cpp"
     }
 }
