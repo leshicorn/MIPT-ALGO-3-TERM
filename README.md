@@ -11,7 +11,7 @@
           /XXXXX(              )--_  XXXXXXXXXXX\
          /XXXXX/ (      O     )   XXXXXX   \XXXXX\
          XXXXX/   /            XXXXXX   \__ \XXXXX
-         XXXXXX__/          XXXXXX         \__---->
+         XXXXXX__/          XXXXXX         /__---->
  ---___  XXX__/          XXXXXX      \__         /
    \-  --__/   ___/\  XXXXXX            /  ___--/=
     \-\    ___/    XXXXXX              '--- XXXXXX
