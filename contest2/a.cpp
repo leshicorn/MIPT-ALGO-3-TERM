@@ -1,57 +1,92 @@
 #include <iostream>
 #include <vector>
+#include <string>
 
-using namespace std;
+/**
+ * @brief Function to perform DFS and find a cycle
 
-// Function to perform DFS and find a cycle
-bool hasCycle(vector<vector<bool>> &adj, vector<bool> &visited, int node) {
-    visited[node] = true;
+ * 
+ * @param graph 
+ * @param s 
+ * @param color 0 - не посещенная, 2 - посещенная, 1 - в работе
+ * @param parents 
+ * @param flag 
+ * @param answer 
+ * @param parent 
+ */
+void dfs(const std::vector<std::vector<int>>& graph, int s, std::vector<int>& color, 
+        std::vector<int>& parents, bool& flag, std::vector<int>& answer, int parent = -1) {
+    color[s] = 1;
+    parents[s] = parent;
 
-    for (size_t i = 0; i < adj[node].size(); i++) {
-        if (!visited[i] && adj[node][i]) {
-            if (hasCycle(adj, visited, i)) {
-                return true;
+    for (int to : graph[s]) {
+        if (color[to] == 0) {
+            dfs(graph, to, color, parents, flag, answer, s);
+        }
+        else if (color[to] == 1) {
+            if (flag) {
+                return;
             }
-        } else if (visited[i] && adj[node][i]) {
-            return true;
+
+            flag = true;
+
+            int number = parents[s];
+            answer.push_back(s);
+
+            while (number != to) {
+                answer.push_back(number);
+                number = parents[number];
+            }
+
+            answer.push_back(to);
+
+            return;
         }
     }
 
-    return false;
-}
-
-// Function to find if there is a cycle in the map
-bool findCycle(vector<vector<bool>> &adj) {
-    vector<bool> visited(adj.size(), false);
-
-    for (size_t i = 0; i < adj.size(); i++) {
-        if (!visited[i]) {
-            if (hasCycle(adj, visited, i)) {
-                return true;
-            }
-        }
-    }
-
-    return false;
+    color[s] = 2;
 }
 
 int main() {
-    int N, M;
-    cin >> N >> M;
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(0);
 
-    vector<vector<bool>> adj(N, vector<bool>(N, false));
+    int n, m;
+    std::cin >> n >> m;
 
-    for (int i = 0; i < M; i++) {
-        int u, v;
-        cin >> u >> v;
-        adj[u - 1][v - 1] = true;
+    std::vector<std::vector<int>> graph(n + 1);
+    std::vector<int> color(n + 1, 0);
+    std::vector<int> parents(n + 1);
+
+    for (int i = 1; i <= m; i++) {
+        int first, second;
+        std::cin >> first >> second;
+        graph[first].push_back(second);
     }
 
-    if (findCycle(adj)) {
-        cout << "YES" << endl;
-    } else {
-        cout << "NO" << endl;
+    bool flag = false;
+    std::vector<int> answer;
+
+    for (int i = 1; i <= n; ++i) {
+        if (flag) {
+            break;
+        }
+
+        if (color[i] != 2) {
+            dfs(graph, i, color, parents, flag, answer);
+        }
     }
 
-    return 0;
+    if (!flag) {
+        std::cout << "NO" << '\n';
+    }
+    else {
+        std::cout << "YES" << '\n';
+
+        for (int i = answer.size() - 1; i >= 0; i--) {
+            std::cout << answer[i] << ' ';
+        }
+
+        std::cout << '\n';
+    }
 }
