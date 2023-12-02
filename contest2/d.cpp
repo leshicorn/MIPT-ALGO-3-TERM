@@ -3,15 +3,13 @@
 #include <stack>
 #include <algorithm>
 
-using namespace std;
-
 const int MAXN = 20000;
 
-vector<int> graph[MAXN + 1];
-vector<int> reverseGraph[MAXN + 1];
-vector<bool> visited(MAXN + 1, false);
-stack<int> resultStack;
-vector<int> componentLabels(MAXN + 1, -1);
+std::vector<int> graph[MAXN + 1];
+std::vector<int> reverseGraph[MAXN + 1];
+std::vector<bool> visited(MAXN + 1, false);
+std::stack<int> resultStack;
+std::vector<int> componentLabels(MAXN + 1, -1);
 int currentLabel = 0;
 
 void dfs1(int node) {
@@ -54,6 +52,13 @@ void kosaraju(int n) {
     }
 }
 
+/**
+ * @brief Topological sort of a graph
+ * 
+ * @param n 
+ * @return true
+ * @return false 
+ */
 bool topologicalSort(int n) {
     for (int i = 1; i <= n; ++i) {
         if (!visited[i]) {
@@ -76,25 +81,24 @@ bool topologicalSort(int n) {
     return true; // Since we are using Kosaraju's algorithm, the graph is guaranteed to be acyclic
 }
 
-
 int main() {
     int n, m;
-    cin >> n >> m;
+    std::cin >> n >> m;
 
     for (int i = 0; i < m; ++i) {
         int u, v;
-        cin >> u >> v;
+        std::cin >> u >> v;
         graph[u].push_back(v);
         reverseGraph[v].push_back(u); // Добавим обратные рёбра для алгоритма Косараю
     }
 
     kosaraju(n);
 
-    cout << currentLabel << endl;
+    std::cout << currentLabel << "\n";
     for (int i = 1; i <= n; ++i) {
-        cout << componentLabels[i] + 1 << " ";
+        std::cout << componentLabels[i] + 1 << " ";
     }
-    cout << endl;
+    std::cout << "\n";
 
     return 0;
 }
