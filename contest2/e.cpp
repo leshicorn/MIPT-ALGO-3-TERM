@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include <set>
 
-using namespace std;
-
 struct Edge {
     size_t destination;
     size_t id;
@@ -17,12 +15,12 @@ struct Edge {
 struct Graph {
     size_t timer = 0;
     size_t INF = 1e9;
-    vector<vector<Edge>> adjacency_list;
-    vector<bool> visited;
-    vector<size_t> entry_time;
-    vector<size_t> exit_time;
-    vector<size_t> parents;
-    set<size_t> bridges;
+    std::vector<std::vector<Edge>> adjacency_list;
+    std::vector<bool> visited;
+    std::vector<size_t> entry_time;
+    std::vector<size_t> exit_time;
+    std::vector<size_t> parents;
+    std::set<size_t> bridges;
     size_t bridge_count = 0;
 
     Graph(size_t n) : adjacency_list(n + 1), visited(n + 1, false), entry_time(n + 1, 0), exit_time(n + 1, 0), parents(n + 1, 0) {}
@@ -46,10 +44,10 @@ struct Graph {
             }
 
             if (visited[neighbor.destination]) {
-                exit_time[current] = min(exit_time[current], entry_time[neighbor.destination]);
+                exit_time[current] = std::min(exit_time[current], entry_time[neighbor.destination]);
             } else {
                 dfs(neighbor.destination, current);
-                exit_time[current] = min(exit_time[current], exit_time[neighbor.destination]);
+                exit_time[current] = std::min(exit_time[current], exit_time[neighbor.destination]);
 
                 if (exit_time[neighbor.destination] == entry_time[neighbor.destination]) {
                     bridges.insert(neighbor.id);
@@ -61,17 +59,15 @@ struct Graph {
 };
 
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
 
     size_t num_vertices, num_edges;
-    cin >> num_vertices >> num_edges;
+    std::cin >> num_vertices >> num_edges;
 
     Graph graph(num_vertices);
 
     for (size_t i = 1; i <= num_edges; i++) {
         size_t first, second;
-        cin >> first >> second;
+        std::cin >> first >> second;
         graph.addEdge(first, second, i);
     }
 
@@ -81,11 +77,12 @@ int main() {
         }
     }
 
-    cout << graph.bridge_count << '\n';
+    std::cout << graph.bridge_count << '\n';
 
     for (auto bridge : graph.bridges) {
-        cout << bridge << ' ';
+        std::cout << bridge << ' ';
     }
+    std::cout << '\n';
 
     return 0;
 }
