@@ -17,8 +17,8 @@ void calculate_mid_distances(const std::vector<int>& houses, std::vector<std::ve
     for (int l = 1; l <= n; l++) {
         for (int r = l; r <= n; r++) {
             int mid = houses[(l + r) >> 1];
-            for (int u = l; u <= r; u++) {
-                mid_distances[l][r] += abs(houses[u] - mid);
+            for (int middle = l; middle <= r; middle++) {
+                mid_distances[l][r] += abs(houses[middle] - mid);
             }
         }
     }
@@ -30,42 +30,42 @@ void calculate_mid_distances(const std::vector<int>& houses, std::vector<std::ve
  * @param houses The positions of the existing houses.
  * @param mid_distances The mid_distances between all pairs of houses.
  * @param m The number of new houses to be built.
- * @param dp The dynamic programming table.
+ * @param table_for_dynamic_prog The dynamic programming table.
  * @param pred The predecessor table.
  * @return The minimum total distance and the positions of the new houses.
  */
-std::pair<int, std::vector<int>> dynamic_programming(const std::vector<int>& houses, const std::vector<std::vector<int>>& mid_distances, int m, std::vector<std::vector<int>>& dp, std::vector<std::vector<std::pair<int, int>>>& pred) {
+std::pair<int, std::vector<int>> find_optimal_location(const std::vector<int>& houses, const std::vector<std::vector<int>>& mid_distances, int m, std::vector<std::vector<int>>& table_for_dynamic_prog, std::vector<std::vector<std::pair<int, int>>>& pred) {
     int n = houses.size() - 1;
     std::vector<int> ans;
 
-    dp[0][0] = 0;
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j <= n; j++) {
-            for (int r = j + 1; r <= n; r++) {
-                if (dp[i + 1][r] > dp[i][j] + mid_distances[j + 1][r]) {
-                    dp[i + 1][r] = dp[i][j] + mid_distances[j + 1][r];
-                    pred[i + 1][r] = { j, r };
+    table_for_dynamic_prog[0][0] = 0;
+    for (int new_house = 0; new_house < m; new_house++) {
+        for (int last_house = 0; last_house <= n; last_house++) {
+            for (int right_house = last_house + 1; right_house <= n; right_house++) {
+                if (table_for_dynamic_prog[new_house + 1][right_house] > table_for_dynamic_prog[new_house][last_house] + mid_distances[last_house + 1][right_house]) {
+                    table_for_dynamic_prog[new_house + 1][right_house] = table_for_dynamic_prog[new_house][last_house] + mid_distances[last_house + 1][right_house];
+                    pred[new_house + 1][right_house] = { last_house, right_house };
                 }
             }
         }
     }
 
-    int i = m;
-    int j = n;
-    while (i != 0) {
-        int l = pred[i][j].first;
-        int r = pred[i][j].second;
-        int u = (l + r) / 2;
-        if ((l + r) % 2) {
-            u++;
+    int new_house = m;
+    int last_house = n;
+    while (new_house != 0) {
+        int left_house = pred[new_house][last_house].first;
+        int right_house = pred[new_house][last_house].second;
+        int middle_house = (left_house + right_house) / 2;
+        if ((left_house + right_house) % 2) {
+            middle_house++;
         }
-        ans.push_back(houses[u]);
-        j = l;
-        i--;
+        ans.push_back(houses[middle_house]);
+        last_house = left_house;
+        new_house--;
     }
     reverse(ans.begin(), ans.end());
 
-    return { dp[m][n], ans };
+    return { table_for_dynamic_prog[m][n], ans };
 }
 
 /**
@@ -93,9 +93,9 @@ void solve() {
     std::vector<std::vector<int>> mid_distances(n + 1, std::vector<int>(n + 1));
     calculate_mid_distances(houses, mid_distances);
 
-    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1, INF));
+    std::vector<std::vector<int>> table_for_dynamic_prog(m + 1, std::vector<int>(n + 1, INF));
     std::vector<std::vector<std::pair<int, int>>> pred(m + 1, std::vector<std::pair<int, int>>(n + 1, BASE_FOR_PAIR));
-    auto [min_distance, new_houses] = dynamic_programming(houses, mid_distances, m, dp, pred);
+    auto [min_distance, new_houses] = find_optimal_location(houses, mid_distances, m, table_for_dynamic_prog, pred);
 
     // Output
     std::cout << min_distance << '\n';
