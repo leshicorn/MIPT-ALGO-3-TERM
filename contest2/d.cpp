@@ -12,22 +12,22 @@ std::stack<int> resultStack;
 std::vector<int> componentLabels(MAXN + 1, -1);
 int currentLabel = 0;
 
-void dfs1(int node) {
+void dfsVisit(int node) {
     visited[node] = true;
     for (int neighbor : graph[node]) {
         if (!visited[neighbor]) {
-            dfs1(neighbor);
+            dfsVisit(neighbor);
         }
     }
     resultStack.push(node);
 }
 
-void dfs2(int node) {
+void dfsAssignLabels(int node) {
     visited[node] = true;
     componentLabels[node] = currentLabel;
     for (int neighbor : reverseGraph[node]) {
         if (!visited[neighbor]) {
-            dfs2(neighbor);
+            dfsAssignLabels(neighbor);
         }
     }
 }
@@ -35,7 +35,7 @@ void dfs2(int node) {
 void kosaraju(int n) {
     for (int i = 1; i <= n; ++i) {
         if (!visited[i]) {
-            dfs1(i);
+            dfsVisit(i);
         }
     }
 
@@ -46,39 +46,10 @@ void kosaraju(int n) {
         resultStack.pop();
 
         if (!visited[node]) {
-            dfs2(node);
+            dfsAssignLabels(node);
             currentLabel++;
         }
     }
-}
-
-/**
- * @brief Topological sort of a graph
- * 
- * @param n 
- * @return true
- * @return false 
- */
-bool topologicalSort(int n) {
-    for (int i = 1; i <= n; ++i) {
-        if (!visited[i]) {
-            dfs1(i);
-        }
-    }
-
-    fill(visited.begin(), visited.end(), false);
-
-    while (!resultStack.empty()) {
-        int node = resultStack.top();
-        resultStack.pop();
-
-        if (!visited[node]) {
-            dfs2(node);
-            currentLabel++;
-        }
-    }
-
-    return true; // Since we are using Kosaraju's algorithm, the graph is guaranteed to be acyclic
 }
 
 int main() {
