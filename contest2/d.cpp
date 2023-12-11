@@ -54,29 +54,6 @@ void kosaraju(int n) {
     }
 }
 
-bool topologicalSort(int n) {
-    for (int i = 1; i <= n; ++i) {
-        if (!visited[i]) {
-            dfs1(i);
-        }
-    }
-
-    fill(visited.begin(), visited.end(), false);
-
-    while (!resultStack.empty()) {
-        int node = resultStack.top();
-        resultStack.pop();
-
-        if (!visited[node]) {
-            dfs2(node);
-            currentLabel++;
-        }
-    }
-
-    return true; // Since we are using Kosaraju's algorithm, the graph is guaranteed to be acyclic
-}
-
-
 int main() {
     int n, m;
     cin >> n >> m;
