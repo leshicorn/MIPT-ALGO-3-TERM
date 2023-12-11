@@ -5,14 +5,16 @@
 #include <unordered_map>
 #include <set>
 
-struct Edge {
+class Edge {
+public:
     size_t destination;
     size_t id;
 
     Edge(size_t dest, size_t i) : destination(dest), id(i) {}
 };
 
-struct Graph {
+class Graph {
+public:
     size_t timer = 0;
     size_t INF = 1e9;
     std::vector<std::vector<Edge>> adjacency_list;
@@ -86,10 +88,3 @@ int main() {
 
     return 0;
 }
-
-/*
- Алгоритм основан на идее, что для нахождения моста достаточно определить,
- достижима ли из вершины текущего ребра вершина с временем входа меньшим, чем текущее. 
- Если не достижима, то это ребро является мостом. 
- Количество мостов и их идентификаторы выводятся в консоль.
- */
