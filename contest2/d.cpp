@@ -71,9 +71,10 @@ public:
         reverseGraph[to].push_back(from);
     }
 
-    void kosaraju() {
+    std::vector<int> kosaraju() {
         DFS dfs(graph, reverseGraph, visited, resultStack, componentLabels, currentLabel);
         dfs.runDFS();
+        return componentLabels;
     }
 
     int getCurrentLabel() const {
@@ -106,10 +107,10 @@ int main() {
         graph.addEdge(u, v);
     }
 
-    graph.kosaraju();
+    std::vector<int> componentLabels = graph.kosaraju();
 
     std::cout << graph.getCurrentLabel() << "\n";
-    for (int label : graph.getComponentLabels()) {
+    for (int label : componentLabels) {
         std::cout << label + 1 << " ";
     }
     std::cout << "\n";
