@@ -13,54 +13,57 @@ public:
     Edge(size_t dest, size_t i) : destination(dest), id(i) {}
 };
 
-class Graph {
+class BridgeSearcher {
 public:
+    std::vector<size_t> bridges;  // Change to vector
+    size_t bridge_count = 0;
     size_t timer = 0;
-    size_t INF = 1e9;
-    std::vector<std::vector<Edge>> adjacency_list;
     std::vector<bool> visited;
     std::vector<size_t> entry_time;
     std::vector<size_t> exit_time;
     std::vector<size_t> parents;
 
-    Graph(size_t n) : adjacency_list(n + 1), visited(n + 1, false), entry_time(n + 1, 0), exit_time(n + 1, 0), parents(n + 1, 0) {}
+    std::vector<size_t> dfs(std::vector<std::vector<Edge>>& adjacency_list, size_t current, size_t parent = -1) {
+        parents[current] = parent;
+        entry_time[current] = timer++;
+        exit_time[current] = entry_time[current];
+        visited[current] = true;
 
-    void addEdge(size_t from, size_t to, size_t id) {
-        adjacency_list[from].emplace_back(to, id);
-        adjacency_list[to].emplace_back(from, id);
-    }
-};
-
-class BridgeSearcher {
-public:
-    std::set<size_t> bridges;
-    size_t bridge_count = 0;
-    
-    void dfs(Graph& graph, size_t current, size_t parent = -1) {
-        graph.parents[current] = parent;
-        graph.entry_time[current] = graph.timer++;
-        graph.exit_time[current] = graph.entry_time[current];
-        graph.visited[current] = true;
-
-        for (size_t i = 0; i < graph.adjacency_list[current].size(); ++i) {
-            Edge neighbor = graph.adjacency_list[current][i];
+        for (size_t i = 0; i < adjacency_list[current].size(); ++i) {
+            Edge neighbor = adjacency_list[current][i];
 
             if (neighbor.destination == parent) {
                 continue;
             }
 
-            if (graph.visited[neighbor.destination]) {
-                graph.exit_time[current] = std::min(graph.exit_time[current], graph.entry_time[neighbor.destination]);
+            if (visited[neighbor.destination]) {
+                exit_time[current] = std::min(exit_time[current], entry_time[neighbor.destination]);
             } else {
-                dfs(graph, neighbor.destination, current);
-                graph.exit_time[current] = std::min(graph.exit_time[current], graph.exit_time[neighbor.destination]);
+                dfs(adjacency_list, neighbor.destination, current);
+                exit_time[current] = std::min(exit_time[current], exit_time[neighbor.destination]);
 
-                if (graph.exit_time[neighbor.destination] == graph.entry_time[neighbor.destination]) {
-                    bridges.insert(neighbor.id);
+                if (exit_time[neighbor.destination] == entry_time[neighbor.destination]) {
+                    bridges.push_back(neighbor.id);  // Change to push_back
                     bridge_count++;
                 }
             }
         }
+
+        return bridges;  // Return the vector of bridges
+    }
+};
+
+class Graph {
+public:
+    size_t timer = 0;
+    size_t INF = 1e9;
+    std::vector<std::vector<Edge>> adjacency_list;
+
+    Graph(size_t n) : adjacency_list(n + 1) {}
+
+    void addEdge(size_t from, size_t to, size_t id) {
+        adjacency_list[from].emplace_back(to, id);
+        adjacency_list[to].emplace_back(from, id);
     }
 };
 
@@ -70,6 +73,10 @@ int main() {
 
     Graph graph(num_vertices);
     BridgeSearcher bridgeSearcher;
+    bridgeSearcher.visited.resize(num_vertices + 1, false);
+    bridgeSearcher.entry_time.resize(num_vertices + 1, 0);
+    bridgeSearcher.exit_time.resize(num_vertices + 1, 0);
+    bridgeSearcher.parents.resize(num_vertices + 1, 0);
 
     for (size_t i = 1; i <= num_edges; i++) {
         size_t first, second;
@@ -77,18 +84,19 @@ int main() {
         graph.addEdge(first, second, i);
     }
 
+    std::vector<size_t> result;
+
     for (size_t i = 1; i <= num_vertices; i++) {
-        if (!graph.visited[i]) {
-            bridgeSearcher.dfs(graph, i);
+        if (!bridgeSearcher.visited[i]) {
+            result = bridgeSearcher.dfs(graph.adjacency_list, i);
         }
     }
 
     std::cout << bridgeSearcher.bridge_count << '\n';
-
-    for (auto bridge : bridgeSearcher.bridges) {
+    for (auto bridge : result) {
         std::cout << bridge << ' ';
     }
-    std::cout << '\n';
+    std::cout << std::endl;
 
     return 0;
 }
