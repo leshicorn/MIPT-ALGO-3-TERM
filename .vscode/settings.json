@@ -44,14 +44,13 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "climits": "cpp",
+        "cstring": "cpp",
         "ctime": "cpp",
         "map": "cpp",
         "set": "cpp",
         "unordered_set": "cpp",
         "iomanip": "cpp",
-        "sstream": "cpp",
-        "cstring": "cpp"
+        "sstream": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }
